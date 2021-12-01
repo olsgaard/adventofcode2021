@@ -17,4 +17,13 @@ def solve2(sonar):
 
 assert solve2(test1) == 5
 
-print(solve2(puzzle))
+def solve2_better(sonar):
+	"""As the last two values of `previous`are the same as the two first values of
+	`current`, we only need to compare the first value of `previous`to the las value
+	of `current` """
+
+	return sum([current > previous for current, previous in zip(sonar[3:], sonar[:-3]) ])
+
+assert solve2_better(test1) == 5
+
+print(solve2_better(puzzle))
