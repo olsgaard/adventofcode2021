@@ -68,3 +68,24 @@ with open('input_day4.txt') as f:
 	bingo_game = f.read().strip()
 
 print(solve(bingo_game))
+
+def play_losing_bingo(numbers, boards, markings):
+	winning_order = []
+	for draw in numbers:
+		for marks, board in zip(markings, boards):
+			for row_idx, row in enumerate(board):
+				try:
+					marks[row_idx][row.index(draw)] = True
+					if sum(marks[row_idx]) == 5:
+						winning_order.append((board, marks, draw))
+				except ValueError:
+					pass
+	return winning_order#[-1]
+
+play_bingo = play_losing_bingo
+print(play_bingo(*parse_bingo(bingo_game)))
+#print(solve(bingo_game))
+
+
+
+
