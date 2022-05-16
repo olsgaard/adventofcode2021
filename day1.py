@@ -1,6 +1,7 @@
 test1 = [199, 200, 208, 210, 200, 207, 240, 269, 260, 263]
 
 def solve(sonar):
+	""" Returns the number of values in the list sonar, that are larger than the previous value """
 	return sum([current > previous for current, previous in zip(sonar[1:], sonar[:-1]) ])
 
 assert solve(test1) == 7
