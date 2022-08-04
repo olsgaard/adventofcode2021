@@ -1,7 +1,7 @@
 from copy import deepcopy
 
-mapl = lambda f,i: list(map(f,i))
-steps = [[mapl(int,list(line)) for line in board.split()] for board in [
+to_board = lambda b: [list(map(int,list(line))) for line in b.split()]
+steps = [to_board(board) for board in [
 """11111
 19991
 19191
@@ -19,10 +19,14 @@ steps = [[mapl(int,list(line)) for line in board.split()] for board in [
 45654"""
 ]]
 
+nflashes = 0
+
 def increase_at(idx, board):
+    global nflashes
     x,y = idx
     board[y][x] += 1
     if board[y][x] == 10:
+        nflashes += 1
         for i in surrounding(idx, board):
             board = increase_at(i, board)
     return board
@@ -46,6 +50,8 @@ def surrounding(idx: tuple, board:list) -> tuple:
 
 
 def step(board):
+    global nflashes
+    nflashes = 0
     board = deepcopy(board)
     for y, line in enumerate(board):
         for x, cell in enumerate(line):
@@ -58,5 +64,28 @@ def step(board):
     return board
 
 assert step(steps[0]) == steps[1]
+assert nflashes == 9
 assert step(steps[1]) == steps[2]
+assert nflashes == 0
 
+nsteps = 100
+flashcount = 0
+
+with open("input_day11.txt") as f:
+    input = to_board(f.read().strip())
+
+board = input
+for i in range(nsteps):
+    board = step(board)
+    flashcount += nflashes
+
+print(flashcount)
+
+board = input
+board_size = len(board) * len(board[0])
+
+for i in range(1,10_000):
+    board = step(board)
+    if nflashes == board_size:
+        print(i)
+        break
