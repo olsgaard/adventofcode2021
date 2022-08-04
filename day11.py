@@ -1,5 +1,4 @@
-from cgi import test
-
+from copy import deepcopy
 
 mapl = lambda f,i: list(map(f,i))
 steps = [[mapl(int,list(line)) for line in board.split()] for board in [
@@ -21,22 +20,19 @@ steps = [[mapl(int,list(line)) for line in board.split()] for board in [
 ]]
 
 def increase_at(idx, board):
-    nflashes = 0
     x,y = idx
     board[y][x] += 1
     if board[y][x] == 10:
-        nflashes += 1
         for i in surrounding(idx, board):
-            new_flashes, board = increase_at(i, board)
-            nflashes += new_flashes
-    return nflashes, board
+            board = increase_at(i, board)
+    return board
     
 def surrounding(idx: tuple, board:list) -> tuple:
     x,y = idx
     xmax = len(board[0])
     ymax = len(board)
 
-    within_bounds = lambda x,y: (0 <= x <= xmax) & (0 <= y <= ymax)
+    within_bounds = lambda x,y: (0 <= x < xmax) & (0 <= y < ymax)
 
     coord_change = [
         (-1,-1), (0,-1), (1,-1),
@@ -44,25 +40,23 @@ def surrounding(idx: tuple, board:list) -> tuple:
         (-1, 1), (0, 1), (1, 1),    
     ]
 
-    move_coords = lambda cc: (idx[0]+cc[0], idx[1]+cc[1])
+    move_coords = lambda cc: (x + cc[0], y + cc[1])
     new_coords = map(move_coords, coord_change)
     return [coord for coord in new_coords if within_bounds(*coord)]
 
 
 def step(board):
-    nflashes = 0
-    board = board[:]
+    board = deepcopy(board)
     for y, line in enumerate(board):
         for x, cell in enumerate(line):
-            new_flashes, _ = increase_at((x,y), board)
-            nflashes += new_flashes
+            increase_at((x,y), board)
 
     for y, line in enumerate(board):
         for x, cell in enumerate(line):
             board[y][x] = cell if cell < 10 else 0
 
-    return nflashes, board
+    return board
 
-assert step(steps[0]) == 9, steps[1]
-assert step(steps[1]) == 0, steps[2]
+assert step(steps[0]) == steps[1]
+assert step(steps[1]) == steps[2]
 
