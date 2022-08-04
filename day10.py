@@ -75,7 +75,6 @@ def solve2(nav_subsystem):
 		])
 	return scores[len(scores)//2]
 
-print(solve2(test))
 assert solve2(test) == 288957
 
 with open('input_day10.txt') as f:
