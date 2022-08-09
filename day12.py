@@ -1,4 +1,4 @@
-test_graph = """start-A
+test_input = """start-A
 start-b
 A-c
 A-b
@@ -6,7 +6,26 @@ b-d
 A-end
 b-end"""
 
-test_paths = """start,A,b,A,c,A,end
+test_input2 = """fs-end
+he-DX
+fs-he
+start-DX
+pj-DX
+end-zg
+zg-sl
+zg-pj
+pj-he
+RW-he
+fs-DX
+pj-RW
+zg-RW
+start-pj
+he-WI
+zg-he
+pj-fs
+start-RW"""
+
+test_output = """start,A,b,A,c,A,end
 start,A,b,A,end
 start,A,b,end
 start,A,c,A,b,A,end
@@ -24,17 +43,17 @@ paths = []
 deadends = {}
 
 def read_graph(s):
-    return {{*line.split('-')} for line in s.split('\n')}
+    return {frozenset(line.split('-')) for line in s.strip().split('\n')}
 
 def filter_in(cave, graph):
     """Returns a set of all connections containing `cave` in `graph`"""
     return {el for el in graph if cave in el}
 
 def find_next_cave(current, graph):
-    return [cave.remove(current).pop() for cave in graph if current in cave]
+    return [next(iter(cave - {current})) for cave in graph if current in cave]
 
 def is_small_cave(c):
-    return (len(c) == 1) and c.islower()
+    return c.islower()
 
 def add_to_deadends(path):
     global deadends
@@ -69,10 +88,22 @@ def step(current, path, graph):
 
 def begin(graph):
     global deadends, paths
+    graph = read_graph(graph)
     deadends, paths = {}, []
 
     step(start, [], graph)
 
 
-begin(test_graph)
-print(paths)
+begin(test_input)
+
+assert '\n'.join(test_output.split('\n')) == '\n'.join(sorted(line for line in [','.join(row) for row in paths]))
+assert len(paths) == 10
+
+begin(test_input2)
+assert len(paths) == 226
+
+with open("input_day12.txt") as f:
+    input_str = f.read()
+
+begin(input_str)
+print(len(paths))
