@@ -107,3 +107,18 @@ with open("input_day12.txt") as f:
 
 begin(input_str)
 print(len(paths))
+
+# Solution 2
+# ==========
+#
+#     >>> from timeit import Timer
+#     >>> print("{:.3f}".format(min(Timer(lambda: begin(input_str)).repeat(10, 1_000))/1_000), "seconds to find all paths")
+#
+# It only takes about 11 ms to find all paths, so simply run solution 1 once for every small cave, allowing that small cave to be visited twice
+
+def all_caves(graph):
+    return {'start'}.union(*graph)
+
+def all_small_caves(graph):
+    return {el for el in graph if el.islower()}
+
