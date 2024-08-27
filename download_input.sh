@@ -31,6 +31,7 @@ for day_number in $(seq "$first" "$last"); do
     -o "${year_number}/day${day_number}_input.txt"
 
   # Check the exit status to determine if the download was successful
+  # shellcheck disable=SC2181
   if [ $? -eq 0 ]; then
     echo "Puzzle input for Day $day_number downloaded successfully!"
   else
